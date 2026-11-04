@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: rust-api
-          image: ghcr.io/jinhosoon/axum-highperf-base:latest  # GitHub Actions가 태그 업데이트
+          image: ghcr.io/jinhosoon/axum-highperf-base:486e3f8
           ports:
             - containerPort: 8080
               protocol: TCP
