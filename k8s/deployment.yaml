@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rust-api
+  labels:
+    app: rust-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rust-api
+  # ── 무중단 Rolling Update ──
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: rust-api
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: rust-api
+          image: ghcr.io/jinhosoon/axum-highperf-base:latest  # GitHub Actions가 태그 업데이트
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: RUST_LOG
+              value: "rust_api=info,tower_http=info"
+          # ── Probe 설정 ──
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          # ── 리소스 제한 ──
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          # ── 보안 컨텍스트 ──
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      terminationGracePeriodSeconds: 30
