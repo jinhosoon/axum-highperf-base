@@ -147,4 +147,4 @@ curl http://localhost:8080/api/items
 3. `k8s/deployment.yaml`의 이미지 태그를 자동 업데이트
 4. Argo CD가 변경을 감지하고 Kubernetes 클러스터에 Sync
 
-![Architecture](docs/architecture.svg)
+![Architecture](/architecture.svg)
