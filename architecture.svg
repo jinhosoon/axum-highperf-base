@@ -1,0 +1,175 @@
+<svg viewBox="0 0 1100 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .txt-ink { fill: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      .txt-muted { fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9.5px; }
+      .txt-soft { fill: #64748b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 8px; }
+      .txt-accent { fill: #d9481e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      .txt-blue { fill: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 8.5px; }
+      .txt-emerald { fill: #059669; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 8.5px; }
+      
+      .bg-zone { fill: rgba(15, 23, 42, 0.02); stroke: #cbd5e1; stroke-width: 1; }
+      .bg-card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; }
+      .bg-accent { fill: rgba(217, 72, 30, 0.08); stroke: #d9481e; stroke-width: 1.8; }
+      .bg-blue { fill: rgba(37, 99, 235, 0.06); stroke: #2563eb; stroke-width: 1.2; }
+      .bg-emerald { fill: rgba(5, 150, 105, 0.06); stroke: #059669; stroke-width: 1.2; }
+    </style>
+    
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8 Z" fill="#d9481e"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8 Z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1100" height="520" rx="12" fill="#ffffff"/>
+
+  <!-- ================= 1. ZONES ================= -->
+  <!-- Zone 1: VCS & Source -->
+  <rect x="20" y="30" width="220" height="460" rx="8" class="bg-zone"/>
+  <rect x="36" y="24" width="110" height="14" rx="2" fill="#ffffff"/>
+  <text x="91" y="34" class="txt-soft" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="0.1em">01. SOURCE &amp; VCS</text>
+
+  <!-- Zone 2: CI & Registry -->
+  <rect x="270" y="30" width="230" height="460" rx="8" class="bg-zone"/>
+  <rect x="286" y="24" width="120" height="14" rx="2" fill="#ffffff"/>
+  <text x="346" y="34" class="txt-soft" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="0.1em">02. CI &amp; REGISTRY</text>
+
+  <!-- Zone 3: GitOps Control Plane -->
+  <rect x="530" y="30" width="220" height="460" rx="8" class="bg-zone"/>
+  <rect x="546" y="24" width="125" height="14" rx="2" fill="#ffffff"/>
+  <text x="608" y="34" class="txt-soft" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="0.1em">03. GITOPS ENGINE</text>
+
+  <!-- Zone 4: Kubernetes Production Cluster -->
+  <rect x="780" y="30" width="300" height="460" rx="8" class="bg-zone"/>
+  <rect x="796" y="24" width="135" height="14" rx="2" fill="#ffffff"/>
+  <text x="863" y="34" class="txt-soft" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="0.1em">04. KUBERNETES RUNTIME</text>
+
+  <!-- ================= 2. CONNECTORS (Orthogonal r=8) ================= -->
+  <!-- [Developer] -> [GitHub Repo] -->
+  <path d="M 130,130 V 170" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="138" y="154" class="txt-soft">git push</text>
+
+  <!-- [GitHub Repo] -> [GitHub Actions] -->
+  <path d="M 220,215 H 280" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="250" y="207" class="txt-soft" text-anchor="middle">webhook</text>
+
+  <!-- [GitHub Actions] -> [GHCR] -->
+  <path d="M 385,255 V 345" fill="none" stroke="#2563eb" stroke-width="1.3" marker-end="url(#arrow-blue)"/>
+  <text x="393" y="304" fill="#2563eb" font-family="ui-monospace, monospace" font-size="8px">push image</text>
+
+  <!-- [GitHub Actions] -> [Manifest Update] -->
+  <path d="M 470,225 H 495 Q 503,225 503,233 V 380 Q 503,388 495,388 H 220" 
+        fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow-emerald)"/>
+  <text x="475" y="402" fill="#059669" font-family="ui-monospace, monospace" font-size="8px">update tag in k8s/</text>
+
+  <!-- [Manifest Repo] -> [Argo CD] -->
+  <path d="M 220,400 H 515 Q 523,400 523,392 V 225 Q 523,215 531,215 H 545" 
+        fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="350" y="415" class="txt-soft">poll repo state</text>
+
+  <!-- [Argo CD] -> [K8s Cluster Sync] -->
+  <path d="M 735,215 H 800" fill="none" stroke="#d9481e" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+  <text x="768" y="207" fill="#d9481e" font-family="ui-monospace, monospace" font-size="8px" text-anchor="middle">auto sync</text>
+
+  <!-- [GHCR] -> [K8s Pods] -->
+  <path d="M 470,385 H 760 Q 768,385 768,377 V 265 Q 768,255 776,255 H 800" 
+        fill="none" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+  <text x="650" y="377" fill="#2563eb" font-family="ui-monospace, monospace" font-size="8px">pull image</text>
+
+  <!-- [Ingress/Service] -> [Axum Pods] -->
+  <path d="M 930,135 V 170" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="938" y="154" class="txt-soft">route traffic</text>
+
+  <!-- [HPA] -> [Axum Pods] -->
+  <path d="M 930,410 V 275" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow-emerald)"/>
+  <text x="938" y="345" fill="#059669" font-family="ui-monospace, monospace" font-size="8px">autoscale (2~10)</text>
+
+  <!-- ================= 3. NODES ================= -->
+  <!-- Node: Developer -->
+  <g transform="translate(40, 70)">
+    <rect width="180" height="60" rx="6" class="bg-card"/>
+    <text x="16" y="26" class="txt-ink" font-size="12" font-weight="600">Developer</text>
+    <text x="16" y="44" class="txt-muted">git commit &amp; tag</text>
+  </g>
+
+  <!-- Node: GitHub Repo -->
+  <g transform="translate(40, 170)">
+    <rect width="180" height="90" rx="6" class="bg-card"/>
+    <text x="16" y="26" class="txt-ink" font-size="12" font-weight="600">GitHub Repository</text>
+    <text x="16" y="44" class="txt-muted">/src &amp; /tests (App)</text>
+    <text x="16" y="60" fill="#059669" font-family="ui-monospace, monospace" font-size="9.5px">/k8s/*.yaml (Manifests)</text>
+    <rect x="14" y="69" width="152" height="13" rx="2" fill="rgba(15, 23, 42, 0.03)"/>
+    <text x="90" y="79" class="txt-soft" text-anchor="middle">Single Source of Truth</text>
+  </g>
+
+  <!-- Node: Git Target for Argo -->
+  <g transform="translate(40, 360)">
+    <rect width="180" height="65" rx="6" class="bg-emerald"/>
+    <text x="16" y="24" fill="#059669" font-size="11" font-weight="600" font-family="-apple-system, sans-serif">Manifest Release Feed</text>
+    <text x="16" y="42" class="txt-muted">deployment.yaml</text>
+    <text x="16" y="55" class="txt-soft">tag: v1.0.X / sha-xxxx</text>
+  </g>
+
+  <!-- Node: GitHub Actions (CI) -->
+  <g transform="translate(290, 170)">
+    <rect width="190" height="85" rx="6" class="bg-card"/>
+    <text x="16" y="24" class="txt-ink" font-size="12" font-weight="600">GitHub Actions CI</text>
+    <text x="16" y="42" class="txt-muted">1. cargo test --release</text>
+    <text x="16" y="58" class="txt-muted">2. Docker multi-stage build</text>
+    <text x="16" y="74" fill="#059669" font-family="ui-monospace, monospace" font-size="9.5px">3. Update deployment.yaml</text>
+  </g>
+
+  <!-- Node: GHCR (Container Registry) -->
+  <g transform="translate(290, 345)">
+    <rect width="190" height="75" rx="6" class="bg-blue"/>
+    <text x="16" y="24" fill="#2563eb" font-size="12" font-weight="600" font-family="-apple-system, sans-serif">GHCR (ghcr.io)</text>
+    <text x="16" y="44" class="txt-muted">OCI Container Image</text>
+    <text x="16" y="60" class="txt-blue">debian-slim · non-root</text>
+  </g>
+
+  <!-- Node: Argo CD Controller -->
+  <g transform="translate(545, 170)">
+    <rect width="190" height="100" rx="6" class="bg-card"/>
+    <text x="16" y="26" class="txt-ink" font-size="12" font-weight="600">Argo CD Controller</text>
+    <text x="16" y="46" class="txt-muted">Automated Sync Policy</text>
+    <text x="16" y="62" class="txt-muted">Self-healing enabled</text>
+    <rect x="14" y="74" width="162" height="16" rx="2" fill="rgba(217, 72, 30, 0.08)"/>
+    <text x="95" y="86" fill="#d9481e" font-family="ui-monospace, monospace" font-size="8.5px" text-anchor="middle" font-weight="600">GitOps Reconciliation</text>
+  </g>
+
+  <!-- Node: Ingress & Service -->
+  <g transform="translate(805, 75)">
+    <rect width="250" height="60" rx="6" class="bg-card"/>
+    <text x="16" y="24" class="txt-ink" font-size="12" font-weight="600">Ingress &amp; Service (:8080)</text>
+    <text x="16" y="44" class="txt-muted">ClusterIP / LoadBalancer</text>
+  </g>
+
+  <!-- FOCAL NODE: Rust Axum Pods (Editorial Accent) -->
+  <g transform="translate(805, 170)">
+    <rect width="250" height="105" rx="8" class="bg-accent"/>
+    <rect x="16" y="16" width="38" height="14" rx="2" fill="#d9481e"/>
+    <text x="35" y="26" fill="#ffffff" font-family="ui-monospace, monospace" font-size="8" font-weight="700" text-anchor="middle">CORE</text>
+    <text x="62" y="27" class="txt-ink" font-size="13" font-weight="700">Axum REST API Pods</text>
+    
+    <text x="16" y="50" class="txt-ink" font-family="ui-monospace, monospace" font-size="9.5px" font-weight="500">• Tokio Runtime &amp; Async IO</text>
+    <text x="16" y="66" class="txt-muted">• Tower: ConcurrencyLimit, Timeout</text>
+    <text x="16" y="82" class="txt-muted">• Compression, CORS, Tracing</text>
+    <text x="16" y="98" class="txt-soft">GET /health · /api/items</text>
+  </g>
+
+  <!-- Node: HPA Controller -->
+  <g transform="translate(805, 410)">
+    <rect width="250" height="60" rx="6" class="bg-emerald"/>
+    <text x="16" y="24" fill="#059669" font-size="12" font-weight="600" font-family="-apple-system, sans-serif">HPA (Pod Autoscaler)</text>
+    <text x="16" y="44" class="txt-muted">CPU 70% / Mem 80% → 2~10 Pods</text>
+  </g>
+</svg>
