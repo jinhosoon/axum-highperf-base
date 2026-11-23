@@ -38,7 +38,7 @@
   - Sharded concurrency (32 tasks, 80% R / 20% W): **4.43x throughput** (`3,400,395` → `15,055,618 ops/sec`)
   - HTTP Router E2E: `GET /health` **463,319.2 RPS** (`p99 = 2.3 µs`), `GET /api/items/search` **5,853.1 RPS** (`p99 = 180.3 µs`)
   - Release binary size: **2.0 MB** (`opt-level=3`, `lto=true`, `strip=true`)
-- **Architecture**: Pragmatic Hexagonal (Domain Core zero-dependency) + Closed `enum ItemRepo` static dispatch + 64-Shard `RwLock` + Inverted Index / Okapi BM25 + Nix Flakes + K8s Restricted PSS + Argo CD GitOps
+- **Architecture**: Idiomatic Rust Flat Modular Architecture (`domain/`, `store/`, `http/`, `cli.rs`) + Closed `enum ItemRepo` static dispatch + 64-Shard `RwLock` + Inverted Index / Okapi BM25 + Nix Flakes + K8s Restricted PSS + Argo CD GitOps
 - **Key decisions**:
   - Replaced `<R: ItemRepository>` turbofish propagation with closed `enum ItemRepo` while retaining zero heap allocation.
   - Enforced domain invariants at compile time via Newtypes (`ItemTitle`, `ItemContent`, `SearchQuery`) instead of ad-hoc runtime string checks.

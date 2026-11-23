@@ -14,8 +14,8 @@ use std::time::Duration;
 use tower::{limit::ConcurrencyLimitLayer, timeout::TimeoutLayer, ServiceBuilder};
 use tower_http::{compression::CompressionLayer, trace::TraceLayer};
 
-use crate::adapters::outbound::ItemRepo;
 use crate::config::AppConfig;
+use crate::store::ItemRepo;
 use handler::{
     create_item, delete_item, get_item, health_check, list_items, search_items, update_item,
 };

@@ -7,11 +7,11 @@ use jiff::Timestamp;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::adapters::outbound::ItemRepo;
 use crate::domain::{
     error::AppError,
     model::{CreateItem, Item, ScoredItem, SearchQuery, UpdateItem},
 };
+use crate::store::ItemRepo;
 
 /// 검색 쿼리 파라미터 DTO (`GET /api/items/search?q=...&limit=...`)
 #[derive(Debug, Deserialize)]

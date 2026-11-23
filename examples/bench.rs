@@ -7,9 +7,9 @@ use tokio::sync::RwLock;
 use tower::ServiceExt;
 use uuid::Uuid;
 
-use rust_api::adapters::outbound::memory_repo::NUM_SHARDS;
 use rust_api::domain::model::{CreateItem, Item, SearchQuery};
 use rust_api::domain::port::ItemRepository;
+use rust_api::store::memory::NUM_SHARDS;
 use rust_api::{create_router, AppConfig, InMemoryItemRepository, ItemRepo};
 
 const DOC_COUNT: usize = 10_000;

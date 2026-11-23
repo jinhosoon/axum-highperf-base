@@ -1,4 +1,4 @@
-pub mod memory_repo;
+pub mod memory;
 
 use uuid::Uuid;
 
@@ -8,7 +8,7 @@ use crate::domain::{
     port::ItemRepository,
 };
 
-pub use memory_repo::InMemoryItemRepository;
+pub use memory::InMemoryItemRepository;
 
 /// 닫힌 다형성(Closed Polymorphism) 기반 저장소 열거형
 ///

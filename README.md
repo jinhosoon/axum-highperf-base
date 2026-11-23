@@ -129,7 +129,9 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 
 ---
 
-## 프로젝트 구조 (Idiomatic Rust + 실용적 헥사고날 아키텍처)
+## 프로젝트 구조 (Idiomatic Rust 모듈형 아키텍처)
+
+> 타입 주도 도메인 설계(Newtype · `thiserror`), 제네릭 전염 없는 닫힌 `enum ItemRepo` 정적 디스패치, Tower 미들웨어 구성(Composition)을 기능 단위의 납작한(Flat) 모듈 구조로 배치했습니다.
 
 ```text
 ├── src/
@@ -137,25 +139,28 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 │   ├── lib.rs                          # [Library] 모듈 외부 노출 (통합 테스트 및 벤치마크 재사용)
 │   ├── config.rs                       # 환경변수 1회 로드 및 캐싱
 │   ├── telemetry.rs                    # 구조화 로깅 초기화 & SIGTERM/Ctrl+C Graceful Shutdown
+│   ├── cli.rs                          # 컨테이너 자체 TCP 헬스체크 프로브 (`--healthcheck`)
 │   ├── domain/                         # [Core] 외부 웹/DB 프레임워크 의존성 Zero
 │   │   ├── model.rs                    # Newtype(ItemTitle, ItemContent, SearchQuery), Item, ScoredItem
 │   │   ├── error.rs                    # thiserror 기반 AppError (std::error::Error + Display)
-│   │   └── port.rs                     # ItemRepository Outbound Port 계약 (RPITIT)
-│   └── adapters/                       # [Adapters] 외부 세계와의 연결
-│       ├── inbound/
-│       │   ├── http/                   # Axum 라우터, CRUD/BM25 검색 핸들러 (ItemRepo enum 직접 주입)
-│       │   └── cli.rs                  # 컨테이너 자체 헬스체크 프로브 (`--healthcheck`)
-│       └── outbound/
-│           ├── mod.rs                  # 닫힌 다형성 enum ItemRepo (제네릭 전염 제거, 0-cost)
-│           └── memory_repo.rs          # 64-Shard RwLock + 역색인 + Okapi BM25 랭킹 엔진
+│   │   └── port.rs                     # ItemRepository 저장소 계약
+│   ├── store/                          # [Storage & Search]
+│   │   ├── mod.rs                      # 닫힌 다형성 enum ItemRepo (제네릭 전염 제거, 0-cost)
+│   │   └── memory.rs                   # 64-Shard RwLock + 역색인 + Okapi BM25 랭킹 엔진
+│   └── http/                           # [HTTP & Middleware]
+│       ├── mod.rs                      # Axum Router 조립 + Tower 고성능 미들웨어 스택
+│       ├── handler.rs                  # HealthCheck + CRUD / BM25 검색 핸들러 (`ItemRepo` 직접 주입)
+│       ├── middleware.rs               # 최소 권한 CORS, 상수 시간 API Key 인증
+│       └── error.rs                    # AppError -> HTTP JSON 응답 변환 (`IntoResponse`)
 ├── examples/
 │   └── bench.rs                        # 재현 가능한 검색/동시성/HTTP E2E 벤치마크 스위트
 ├── tests/
 │   └── integration_test.rs             # 헬스체크, 상수 시간 API Key 인증, CRUD & BM25 E2E 테스트
-├── flake.nix                           # Nix Flakes 재현 가능 개발/빌드 환경
+├── flake.nix                           # Nix Flakes 재현 가능 개발/빌드 환경 (`flake.lock` 포함)
 ├── Dockerfile                          # 멀티 스테이지 빌드 (보안 강화 + 자체 헬스체크)
 ├── k8s/                                # Deployment (RollingUpdate), Service, HPA (2~10 Pods)
 ├── docs/
+│   ├── images/                         # 벤치마크, Argo CD GitOps, HPA 오토스케일링 실측 캡처
 │   └── career-ops-asteromorph.md       # 아스테로모프 타겟 career-ops 산출물 & STAR+R 면접 팩
 └── .github/workflows/
     └── ci-cd.yaml                      # CI/CD 파이프라인 (RustSec 보안 감사 포함)
