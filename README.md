@@ -223,3 +223,12 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 </details>
 
 ![Architecture](/architecture.svg)
+
+---
+
+## 🤖 AI-Assisted Engineering Workflow
+
+이 프로젝트는 **Antigravity (AI Coding Agent)** 및 **MCP 생태계**(`Notion`, `GitHub`, `Context7`, `Sequential Thinking`, `Graphify`)와 페어 프로그래밍 형태로 설계·검증되었습니다.
+
+- **역할 분담 (Human-in-the-Loop)**: 아키텍처 의사결정(헥사고날 → Idiomatic Rust `enum` 다형성·Newtype 전환), 성능 병목 가설 수립(역색인+BM25, 64-Shard `RwLock`), 실측 벤치마크 및 Kubernetes/Argo CD 트러블슈팅(`RUSTSEC-2026-0543` `jiff` 전환, HPA vs Argo CD `selfHeal` 충돌 해결)의 최종 판단과 검증은 개발자가 직접 주도했습니다.
+- **재현성과 검증 원칙**: AI와 함께 작성한 모든 코드는 `cargo test`, `cargo clippy --all-targets -- -D warnings`, `cargo run --release --example bench`, `nix build`, `fortio` 인클러스터 부하 테스트를 통해 실제 실행 결과로 검증했습니다.
