@@ -5,7 +5,8 @@ metadata:
   labels:
     app: rust-api
 spec:
-  replicas: 2
+  # replicas is managed exclusively by HPA (k8s/hpa.yaml, minReplicas: 2)
+  # to prevent GitOps selfHeal drift conflicts with Argo CD.
   selector:
     matchLabels:
       app: rust-api
