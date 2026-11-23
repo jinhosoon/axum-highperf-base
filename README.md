@@ -52,6 +52,8 @@ cargo run --release --example bench
 | **HTTP Router E2E (`GET /api/items/search`)** | — | **`5,853.1 RPS`** (10,000건 대상) | `p50=169.9 µs`, `p99=180.3 µs` |
 | **릴리스 바이너리 크기** | — | **`2.0 MB`** (`target/release/rust-api`) | LTO + `strip = true` |
 
+![Benchmark Result](docs/images/benchmark-result.png)
+
 ---
 
 ## 빠른 시작
@@ -177,5 +179,16 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 2. GitHub Actions가 Docker 이미지를 빌드하여 GHCR에 Push
 3. `k8s/deployment.yaml`의 이미지 태그를 자동 업데이트
 4. Argo CD가 변경을 감지하고 Kubernetes 클러스터에 Sync
+
+### Argo CD 실시간 배포 검증 화면 (Arch Linux `kind` 클러스터)
+
+![Argo CD GitOps Deployment](docs/images/argocd-gitops.png)
+
+<details>
+<summary>실제 구동 중인 Pod 구조화 로그 (<code>tracing</code>) 보기</summary>
+
+![Argo CD Pod Logs](docs/images/argocd-pod-logs.png)
+
+</details>
 
 ![Architecture](/architecture.svg)
