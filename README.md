@@ -184,6 +184,32 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 
 ![Argo CD GitOps Deployment](docs/images/argocd-gitops.png)
 
+### Kubernetes 인클러스터 부하 테스트 & HPA 오토스케일링 검증 (`fortio`, 90s)
+
+클러스터 내부에서 `fortio` (`-c 32 -qps 0 -t 90s`)로 `GET /api/items/search?q=rust+bm25+quantum&limit=10`에 최대 부하를 인가하여 HPA 동작과 무중단 처리량을 검증했습니다. 이 과정에서 **`k8s/deployment.yaml`에 고정된 `replicas: 2`와 Argo CD `selfHeal: true`가 HPA의 스케일링을 되돌리는 충돌**을 발견하고, `spec.replicas`를 제거해 HPA에 단일 소유권(Single Source of Truth)을 부여(`8a73364`)하여 해결했습니다.
+
+| 지표 (Fortio 90초, 32 동시 연결) | 수정 전 (HPA vs Argo CD 충돌) | 수정 후 (`spec.replicas` 제거) | 개선 효과 |
+|---|---|---|---|
+| **HPA Scale-Out** | `2`개 고정 (Argo CD가 롤백) | **`2 → 4 → 6` Pod 정상 증설** | GitOps 드리프트 충돌 해소 |
+| **총 처리 요청 수 (90초)** | `844,564` req | **`975,417` req** | **+15.5% 증가** |
+| **지속 처리량 (QPS)** | `9,381.0 QPS` | **`10,837.3 QPS`** | **+1,456 QPS 향상** |
+| **평균 응답 지연시간** | `3.410 ms` | **`2.952 ms`** (`p50: 0.83ms`, `p90: 3.89ms`) | **-13.4% 단축** |
+| **HTTP 200 성공률** | `100.0%` | **`100.0%` (에러 0건)** | 스케일링 중 무중단 유지 |
+| **CPU 부하 분산** | `250%` 한계치 포화 지속 | `250%` → **4 Pod 증설 직후 `125%`로 절반 분산** | 즉각적 병목 해소 |
+
+![HPA Scaled to 6 Healthy Pods](docs/images/hpa-scale-6healthy.jpg)
+
+<details>
+<summary>HPA 단계별 증설 과정 보기 (<code>2 → 4 → 6</code> Pod 실시간 캡처)</summary>
+
+**1단계: `2 → 4` Pod 증설 시작 (`Progressing`, `8a73364` 반영)**
+![HPA Scale 2 to 4](docs/images/hpa-scale-2to4.png)
+
+**2단계: `4 → 6` Pod 2차 증설 (`ContainerCreating`)**
+![HPA Scale 4 to 6](docs/images/hpa-scale-4to6.jpg)
+
+</details>
+
 <details>
 <summary>실제 구동 중인 Pod 구조화 로그 (<code>tracing</code>) 보기</summary>
 
