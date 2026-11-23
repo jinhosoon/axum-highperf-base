@@ -1,4 +1,4 @@
-# 🦀 axum-highperf-base (Rust API & In-Memory BM25 Search Engine)
+# axum-highperf-base (Rust API & In-Memory BM25 Search Engine)
 
 > Axum 0.8 기반 고성능 비동기 백엔드 + 64-Shard `RwLock` + 인메모리 역색인(Okapi BM25) 검색 엔진 + Nix Flake + Argo CD GitOps 파이프라인
 
@@ -226,7 +226,7 @@ curl "http://localhost:8080/api/items/search?q=rust+bm25&limit=5"
 
 ---
 
-## 🤖 AI-Assisted Engineering Workflow
+## AI-Assisted Engineering Workflow
 
 이 프로젝트는 **Antigravity (AI Coding Agent)** 및 **MCP 생태계**(`Notion`, `GitHub`, `Context7`, `Sequential Thinking`, `Graphify`)와 페어 프로그래밍 형태로 설계·검증되었습니다.
 
