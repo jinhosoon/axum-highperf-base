@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: rust-api
-          image: ghcr.io/jinhosoon/axum-highperf-base:9a69be5
+          image: ghcr.io/jinhosoon/axum-highperf-base:108c148
           ports:
             - containerPort: 8080
               protocol: TCP
