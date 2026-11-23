@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use chrono::Utc;
+use jiff::Timestamp;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -26,7 +26,7 @@ pub struct SearchParams {
 pub async fn health_check() -> Json<serde_json::Value> {
     Json(serde_json::json!({
         "status": "healthy",
-        "timestamp": Utc::now().to_rfc3339(),
+        "timestamp": Timestamp::now().to_string(),
     }))
 }
 

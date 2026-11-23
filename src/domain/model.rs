@@ -1,7 +1,7 @@
 use std::fmt;
 use std::ops::Deref;
 
-use chrono::{DateTime, Utc};
+use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -169,7 +169,7 @@ pub struct Item {
     pub id: Uuid,
     pub title: ItemTitle,
     pub content: ItemContent,
-    pub created_at: DateTime<Utc>,
+    pub created_at: Timestamp,
 }
 
 /// BM25 관련도 점수가 포함된 검색 결과 모델
@@ -203,7 +203,7 @@ impl Item {
             id: Uuid::new_v4(),
             title,
             content,
-            created_at: Utc::now(),
+            created_at: Timestamp::now(),
         })
     }
 
