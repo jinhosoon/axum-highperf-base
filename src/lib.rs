@@ -5,6 +5,6 @@ pub mod telemetry;
 
 pub use adapters::{
     inbound::{cli::run_healthcheck, http::create_router},
-    outbound::InMemoryItemRepository,
+    outbound::{InMemoryItemRepository, ItemRepo},
 };
 pub use config::AppConfig;

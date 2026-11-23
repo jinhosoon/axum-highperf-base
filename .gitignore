@@ -17,3 +17,8 @@ desktop.ini
 .env
 .env.*
 !.env.example
+
+# Local AI tooling & knowledge graph
+.gemini/
+GEMINI.md
+graphify-out/

@@ -3,14 +3,14 @@ use uuid::Uuid;
 
 use crate::domain::{
     error::AppError,
-    model::{CreateItem, Item, UpdateItem},
+    model::{CreateItem, Item, ScoredItem, SearchQuery, UpdateItem},
 };
 
-/// Outbound Port: 아이템 저장소 인터페이스
+/// Outbound Port: 아이템 저장소 및 검색 계약
 ///
-/// `async-trait`의 힙 할당(Box<dyn Future>) 오버헤드 없이
-/// Rust 네이티브 RPITIT(Return Position Impl Trait In Trait)를 사용하여
-/// 정적 디스패치(Zero-cost abstraction)를 보장합니다.
+/// 도메인 코어가 외부 저장소 구현체에 의존하지 않도록 계약을 정의합니다.
+/// 애플리케이션 내부 배선에서는 제네릭(`<R>`) 전염을 없애기 위해
+/// `adapters::outbound::ItemRepo` 닫힌 `enum` 다형성으로 정적 디스패치합니다.
 pub trait ItemRepository: Clone + Send + Sync + 'static {
     fn find_all(&self) -> impl Future<Output = Result<Vec<Item>, AppError>> + Send;
 
@@ -25,4 +25,9 @@ pub trait ItemRepository: Clone + Send + Sync + 'static {
     ) -> impl Future<Output = Result<Item, AppError>> + Send;
 
     fn delete(&self, id: Uuid) -> impl Future<Output = Result<(), AppError>> + Send;
+
+    fn search(
+        &self,
+        query: SearchQuery,
+    ) -> impl Future<Output = Result<Vec<ScoredItem>, AppError>> + Send;
 }

@@ -1,6 +1,4 @@
-use rust_api::{
-    create_router, run_healthcheck, telemetry, AppConfig, InMemoryItemRepository,
-};
+use rust_api::{create_router, run_healthcheck, telemetry, AppConfig, ItemRepo};
 
 #[tokio::main]
 async fn main() {
@@ -15,7 +13,7 @@ async fn main() {
     telemetry::init_tracing();
 
     // ── 의존성 주입 (Outbound Adapter → Inbound HTTP Router) ──
-    let repository = InMemoryItemRepository::new();
+    let repository = ItemRepo::in_memory();
     let app = create_router(repository, &config);
 
     // ── 서버 시작 & Graceful Shutdown ──

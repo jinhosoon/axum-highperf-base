@@ -1,16 +1,24 @@
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::StatusCode,
     Json,
 };
 use chrono::Utc;
+use serde::Deserialize;
 use uuid::Uuid;
 
+use crate::adapters::outbound::ItemRepo;
 use crate::domain::{
     error::AppError,
-    model::{CreateItem, Item, UpdateItem},
-    port::ItemRepository,
+    model::{CreateItem, Item, ScoredItem, SearchQuery, UpdateItem},
 };
+
+/// 검색 쿼리 파라미터 DTO (`GET /api/items/search?q=...&limit=...`)
+#[derive(Debug, Deserialize)]
+pub struct SearchParams {
+    pub q: String,
+    pub limit: Option<usize>,
+}
 
 // ─── Health Check ────────────────────────────────────────────
 
@@ -22,19 +30,27 @@ pub async fn health_check() -> Json<serde_json::Value> {
     }))
 }
 
-// ─── CRUD Handlers (ItemRepository Port 기반) ────────────────
+// ─── CRUD & Search Handlers (`enum ItemRepo` 닫힌 다형성) ────
 
 /// 전체 아이템 조회
-pub async fn list_items<R: ItemRepository>(
-    State(repo): State<R>,
-) -> Result<Json<Vec<Item>>, AppError> {
+pub async fn list_items(State(repo): State<ItemRepo>) -> Result<Json<Vec<Item>>, AppError> {
     let items = repo.find_all().await?;
     Ok(Json(items))
 }
 
+/// 역색인 + Okapi BM25 랭킹 검색
+pub async fn search_items(
+    State(repo): State<ItemRepo>,
+    Query(params): Query<SearchParams>,
+) -> Result<Json<Vec<ScoredItem>>, AppError> {
+    let query = SearchQuery::try_new(&params.q, params.limit)?;
+    let results = repo.search(query).await?;
+    Ok(Json(results))
+}
+
 /// 단일 아이템 조회
-pub async fn get_item<R: ItemRepository>(
-    State(repo): State<R>,
+pub async fn get_item(
+    State(repo): State<ItemRepo>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<Item>, AppError> {
     repo.find_by_id(id)
@@ -44,8 +60,8 @@ pub async fn get_item<R: ItemRepository>(
 }
 
 /// 아이템 생성
-pub async fn create_item<R: ItemRepository>(
-    State(repo): State<R>,
+pub async fn create_item(
+    State(repo): State<ItemRepo>,
     Json(input): Json<CreateItem>,
 ) -> Result<(StatusCode, Json<Item>), AppError> {
     let item = repo.create(input).await?;
@@ -54,8 +70,8 @@ pub async fn create_item<R: ItemRepository>(
 }
 
 /// 아이템 수정 (부분 업데이트)
-pub async fn update_item<R: ItemRepository>(
-    State(repo): State<R>,
+pub async fn update_item(
+    State(repo): State<ItemRepo>,
     Path(id): Path<Uuid>,
     Json(input): Json<UpdateItem>,
 ) -> Result<Json<Item>, AppError> {
@@ -65,8 +81,8 @@ pub async fn update_item<R: ItemRepository>(
 }
 
 /// 아이템 삭제
-pub async fn delete_item<R: ItemRepository>(
-    State(repo): State<R>,
+pub async fn delete_item(
+    State(repo): State<ItemRepo>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
     repo.delete(id).await?;
