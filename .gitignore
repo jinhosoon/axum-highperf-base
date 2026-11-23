@@ -22,3 +22,7 @@ desktop.ini
 .gemini/
 GEMINI.md
 graphify-out/
+
+# Nix build symlink
+result
+result-*
